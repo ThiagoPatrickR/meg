@@ -1,0 +1,58 @@
+.config-form {
+    margin-bottom: 30px;
+}
+
+.config-form .form-group {
+    margin-bottom: 25px;
+}
+
+.form-help {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.config-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.success-alert {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.config-tips {
+    background: var(--off-white);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.config-tips h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--verde-escuro);
+}
+
+.config-tips ul {
+    list-style: none;
+    padding: 0;
+}
+
+.config-tips li {
+    padding: 8px 0;
+    color: var(--gray);
+    padding-left: 20px;
+    position: relative;
+}
+
+.config-tips li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--verde-esmeralda);
+}

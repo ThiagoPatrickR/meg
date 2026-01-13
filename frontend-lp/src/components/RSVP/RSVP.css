@@ -1,0 +1,104 @@
+.rsvp {
+    padding: var(--section-padding);
+    background: linear-gradient(135deg, var(--rosa-claro) 0%, #FFE4EC 100%);
+}
+
+.rsvp-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+}
+
+.rsvp-form .form-row {
+    margin-bottom: 0;
+}
+
+.rsvp-form .form-row.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.rsvp-form .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rsvp-form .form-group label svg {
+    color: var(--verde-esmeralda);
+}
+
+.rsvp-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.rsvp-deadline {
+    text-align: center;
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-top: 20px;
+}
+
+.rsvp-deadline strong {
+    color: var(--verde-escuro);
+}
+
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fde8e8;
+    border-radius: 8px;
+}
+
+/* Success State */
+.rsvp-success {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.rsvp-success .success-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--verde-esmeralda);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    color: var(--white);
+    font-size: 2rem;
+}
+
+.rsvp-success h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.rsvp-success p {
+    color: var(--gray);
+    font-size: 1.1rem;
+}
+
+.success-heart {
+    font-size: 3rem;
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    .rsvp-container {
+        padding: 30px 20px;
+    }
+
+    .rsvp-form .form-row.two-cols {
+        grid-template-columns: 1fr;
+    }
+}

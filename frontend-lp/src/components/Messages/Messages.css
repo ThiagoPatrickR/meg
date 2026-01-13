@@ -1,0 +1,169 @@
+.messages {
+    padding: var(--section-padding);
+    background: var(--white);
+}
+
+.messages-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.message-form-container,
+.messages-display {
+    background: var(--off-white);
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.message-form-container h3,
+.messages-display h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    color: var(--verde-escuro);
+}
+
+.message-form-container h3 svg,
+.messages-display h3 svg {
+    color: var(--rosa-claro);
+}
+
+.author-type-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.type-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 2px solid #E0E0E0;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.type-option input {
+    display: none;
+}
+
+.type-option:hover,
+.type-option.active {
+    border-color: var(--verde-esmeralda);
+    background: rgba(2, 104, 65, 0.05);
+}
+
+.type-option.active {
+    background: var(--verde-esmeralda);
+    color: var(--white);
+}
+
+.type-option svg {
+    font-size: 1rem;
+}
+
+.sent-success {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--verde-esmeralda);
+}
+
+.sent-success svg {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.messages-display {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--rosa-claro);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.message-author {
+    font-weight: 600;
+    color: var(--verde-escuro);
+}
+
+.message-type {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--light-gray);
+    color: var(--gray);
+}
+
+.message-type.family {
+    background: #E8F5E9;
+    color: var(--verde-esmeralda);
+}
+
+.message-type.godparent {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+.message-content {
+    color: var(--dark-gray);
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.no-messages,
+.loading {
+    text-align: center;
+    color: var(--gray);
+    padding: 40px 20px;
+}
+
+@media (max-width: 900px) {
+    .messages-container {
+        grid-template-columns: 1fr;
+    }
+
+    .messages-display {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .author-type-options {
+        flex-direction: column;
+    }
+
+    .type-option {
+        justify-content: center;
+    }
+}

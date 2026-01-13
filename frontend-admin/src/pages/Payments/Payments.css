@@ -1,0 +1,19 @@
+.payer-email {
+    display: block;
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.method-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--light-gray);
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--gray);
+    padding: 40px;
+}

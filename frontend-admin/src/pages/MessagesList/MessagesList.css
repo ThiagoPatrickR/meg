@@ -1,0 +1,78 @@
+.pending-badge {
+    margin-left: 10px;
+    background: var(--warning);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: normal;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message-item {
+    background: var(--off-white);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid var(--warning);
+}
+
+.message-item.approved {
+    border-left-color: var(--success);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.message-header strong {
+    color: var(--verde-escuro);
+    margin-right: 10px;
+}
+
+.author-type {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+.message-content {
+    color: var(--dark-gray);
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.message-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message-date {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+.message-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--gray);
+    padding: 40px;
+}

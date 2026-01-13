@@ -1,0 +1,300 @@
+/* Wedding Theme - Marcelo & Gabriela */
+/* Color Palette: Rosa Claro e Verde Esmeralda */
+
+:root {
+  /* Primary Colors */
+  --rosa-claro: #FFC2D2;
+  --verde-esmeralda: #026841;
+  --verde-escuro: #003717;
+
+  /* Neutral Colors */
+  --white: #FFFFFF;
+  --off-white: #FFF9FA;
+  --light-gray: #F5F5F5;
+  --gray: #888888;
+  --dark-gray: #333333;
+
+  /* Gradients */
+  --gradient-hero: linear-gradient(135deg, rgba(2, 104, 65, 0.9) 0%, rgba(0, 55, 23, 0.95) 100%);
+  --gradient-pink: linear-gradient(135deg, #FFC2D2 0%, #FFE4EC 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 55, 23, 0.08);
+  --shadow-md: 0 4px 20px rgba(0, 55, 23, 0.12);
+  --shadow-lg: 0 8px 40px rgba(0, 55, 23, 0.16);
+
+  /* Typography */
+  --font-primary: 'Playfair Display', Georgia, serif;
+  --font-secondary: 'Poppins', 'Segoe UI', sans-serif;
+
+  /* Spacing */
+  --section-padding: 80px 20px;
+  --container-max: 1200px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-secondary);
+  color: var(--dark-gray);
+  background: var(--off-white);
+  line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+  min-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-primary);
+  color: var(--verde-escuro);
+  line-height: 1.3;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure all sections are full width */
+section {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+main {
+  width: 100%;
+}
+
+/* Container */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Section Title */
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  color: var(--verde-escuro);
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--rosa-claro);
+  border-radius: 2px;
+}
+
+.section-title p {
+  color: var(--gray);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: var(--verde-esmeralda);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--verde-escuro);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--rosa-claro);
+  color: var(--verde-escuro);
+}
+
+.btn-secondary:hover {
+  background: #FFB0C4;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--verde-esmeralda);
+  border: 2px solid var(--verde-esmeralda);
+}
+
+.btn-outline:hover {
+  background: var(--verde-esmeralda);
+  color: var(--white);
+}
+
+/* Form Inputs */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--verde-escuro);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #E0E0E0;
+  border-radius: 12px;
+  font-family: var(--font-secondary);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  background: var(--white);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--verde-esmeralda);
+  box-shadow: 0 0 0 4px rgba(2, 104, 65, 0.1);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 60px 15px;
+  }
+
+  .section-title h2 {
+    font-size: 2rem;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title h2 {
+    font-size: 1.75rem;
+  }
+}

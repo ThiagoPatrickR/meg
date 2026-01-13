@@ -1,0 +1,71 @@
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.category-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--off-white);
+    padding: 15px 20px;
+    border-radius: 12px;
+    transition: all var(--transition);
+}
+
+.category-card:hover {
+    background: var(--light-gray);
+}
+
+.category-icon {
+    font-size: 2rem;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-info h3 {
+    font-size: 1rem;
+    color: var(--verde-escuro);
+    margin-bottom: 2px;
+}
+
+.category-info span {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.category-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Emoji Picker */
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.emoji-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    background: var(--white);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.emoji-btn:hover,
+.emoji-btn.active {
+    border-color: var(--verde-esmeralda);
+    background: rgba(2, 104, 65, 0.05);
+}
+
+.modal-content.small {
+    max-width: 450px;
+}
