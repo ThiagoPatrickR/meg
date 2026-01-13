@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Backend API
   backend:
-    image: thiagopatrickr/meg-backend:latest
+    image: thiagopatrickr/meg:backend
     deploy:
       replicas: 1
       restart_policy:
@@ -45,7 +45,7 @@ services:
 
   # Frontend Landing Page
   frontend-lp:
-    image: thiagopatrickr/meg-frontend-lp:latest
+    image: thiagopatrickr/meg:frontend-lp
     deploy:
       replicas: 1
       restart_policy:
@@ -65,7 +65,7 @@ services:
 
   # Frontend Admin Panel
   frontend-admin:
-    image: thiagopatrickr/meg-frontend-admin:latest
+    image: thiagopatrickr/meg:frontend-admin
     deploy:
       replicas: 1
       restart_policy:
