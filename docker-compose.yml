@@ -3,9 +3,11 @@ version: '3.8'
 services:
   # Backend API
   backend:
-    build: ./backend
-    container_name: meg-backend
-    restart: unless-stopped
+    image: thiagopatrickr/meg-backend:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
     environment:
       - NODE_ENV=production
       - PORT=3333
@@ -15,12 +17,12 @@ services:
       - DB_USER=${DB_USER:-postgres}
       - DB_PASS=${DB_PASS}
       - DB_NAME=${DB_NAME:-meg}
-      - JWT_SECRET=${JWT_SECRET:-meg_wedding_secret_key}
+      - JWT_SECRET=${JWT_SECRET}
       - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
       - MP_PUBLIC_KEY=${MP_PUBLIC_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - FRONTEND_URL=https://mg.tgbia.com
-      - ADMIN_URL=https://adminmg.tgbia.com
+      - FRONTEND_URL=${FRONTEND_URL}
+      - ADMIN_URL=${ADMIN_URL}
     volumes:
       - ./uploads:/app/uploads
     networks:
@@ -29,32 +31,25 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=tpr_ia"
-      # Route for API on Landing Page domain
       - "traefik.http.routers.meg-backend-lp.rule=Host(`mg.tgbia.com`) && PathPrefix(`/api`)"
       - "traefik.http.routers.meg-backend-lp.entrypoints=websecure"
       - "traefik.http.routers.meg-backend-lp.tls=true"
       - "traefik.http.routers.meg-backend-lp.tls.certresolver=letsencryptresolver"
       - "traefik.http.routers.meg-backend-lp.service=meg-backend"
-      # Route for API on Admin domain
       - "traefik.http.routers.meg-backend-admin.rule=Host(`adminmg.tgbia.com`) && PathPrefix(`/api`)"
       - "traefik.http.routers.meg-backend-admin.entrypoints=websecure"
       - "traefik.http.routers.meg-backend-admin.tls=true"
       - "traefik.http.routers.meg-backend-admin.tls.certresolver=letsencryptresolver"
       - "traefik.http.routers.meg-backend-admin.service=meg-backend"
-      # Service definition
       - "traefik.http.services.meg-backend.loadbalancer.server.port=3333"
 
   # Frontend Landing Page
   frontend-lp:
-    build:
-      context: ./frontend-lp
-      args:
-        - VITE_API_URL=https://mg.tgbia.com/api
-        - VITE_MP_PUBLIC_KEY=${MP_PUBLIC_KEY}
-    container_name: meg-frontend-lp
-    restart: unless-stopped
-    depends_on:
-      - backend
+    image: thiagopatrickr/meg-frontend-lp:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
     networks:
       - meg-network
       - tpr_ia
@@ -70,14 +65,11 @@ services:
 
   # Frontend Admin Panel
   frontend-admin:
-    build:
-      context: ./frontend-admin
-      args:
-        - VITE_API_URL=https://adminmg.tgbia.com/api
-    container_name: meg-frontend-admin
-    restart: unless-stopped
-    depends_on:
-      - backend
+    image: thiagopatrickr/meg-frontend-admin:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
     networks:
       - meg-network
       - tpr_ia
@@ -93,7 +85,7 @@ services:
 
 networks:
   meg-network:
-    driver: bridge
+    driver: overlay
   tpr_ia:
     external: true
 
