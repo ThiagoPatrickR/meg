@@ -3,11 +3,20 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 
-const uploadPath = process.env.UPLOAD_PATH || './uploads';
+const uploadPath = process.env.UPLOAD_PATH
+    ? path.resolve(process.env.UPLOAD_PATH)
+    : path.resolve(__dirname, '..', '..', 'uploads');
+
+console.log('Upload path set to:', uploadPath);
 
 // Ensure upload directory exists
 if (!fs.existsSync(uploadPath)) {
-    fs.mkdirSync(uploadPath, { recursive: true });
+    try {
+        fs.mkdirSync(uploadPath, { recursive: true });
+        console.log('Created upload directory:', uploadPath);
+    } catch (error) {
+        console.error('Failed to create upload directory:', error);
+    }
 }
 
 const storage = multer.diskStorage({

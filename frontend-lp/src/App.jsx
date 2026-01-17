@@ -1,7 +1,7 @@
 import './styles/global.css';
 import Navbar from './components/Navbar/Navbar';
 import Hero from './components/Hero/Hero';
-import OurStory from './components/OurStory/OurStory';
+
 import EventInfo from './components/EventInfo/EventInfo';
 import GiftList from './components/GiftList/GiftList';
 import RSVP from './components/RSVP/RSVP';
@@ -16,7 +16,7 @@ function App() {
       <Navbar />
       <main>
         <Hero />
-        <OurStory />
+
         <EventInfo />
         <GiftList />
         <RSVP />

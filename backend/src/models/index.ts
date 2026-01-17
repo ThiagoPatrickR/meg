@@ -6,6 +6,7 @@ import Message from './Message';
 import Payment from './Payment';
 import ChatConfig from './ChatConfig';
 import SiteConfig from './SiteConfig';
+import Photo from './Photo';
 
 export {
     User,
@@ -16,4 +17,5 @@ export {
     Payment,
     ChatConfig,
     SiteConfig,
+    Photo,
 };

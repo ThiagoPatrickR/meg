@@ -59,6 +59,25 @@
     border-radius: 8px;
 }
 
+.individual-invite-notice {
+    background: #f8f9fa;
+    border-left: 3px solid #6c757d;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+}
+
+.individual-invite-notice p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.individual-invite-notice strong {
+    color: #495057;
+}
+
 /* Success State */
 .rsvp-success {
     text-align: center;

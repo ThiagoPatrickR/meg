@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaHeart, FaUser, FaPhone, FaEnvelope, FaUsers, FaCheck } from 'react-icons/fa';
+import { FaHeart, FaUser, FaPhone, FaEnvelope, FaCheck } from 'react-icons/fa';
 import api from '../../services/api';
 import './RSVP.css';
 
@@ -9,7 +9,6 @@ const RSVP = () => {
         name: '',
         phone: '',
         email: '',
-        guests: 1,
         message: ''
     });
     const [submitted, setSubmitted] = useState(false);
@@ -113,21 +112,6 @@ const RSVP = () => {
                             </div>
 
                             <div className="form-group">
-                                <label><FaUsers /> Número de Acompanhantes</label>
-                                <select
-                                    name="guests"
-                                    value={formData.guests}
-                                    onChange={handleChange}
-                                >
-                                    <option value={1}>Apenas eu</option>
-                                    <option value={2}>Eu + 1 acompanhante</option>
-                                    <option value={3}>Eu + 2 acompanhantes</option>
-                                    <option value={4}>Eu + 3 acompanhantes</option>
-                                    <option value={5}>Eu + 4 acompanhantes</option>
-                                </select>
-                            </div>
-
-                            <div className="form-group">
                                 <label><FaHeart /> Deixe uma mensagem (opcional)</label>
                                 <textarea
                                     name="message"
@@ -136,6 +120,10 @@ const RSVP = () => {
                                     onChange={handleChange}
                                     rows={3}
                                 />
+                            </div>
+
+                            <div className="individual-invite-notice">
+                                <p><strong>Convite individual:</strong> Reservamos um lugar especial só para você!</p>
                             </div>
 
                             {error && <p className="error-message">{error}</p>}
@@ -152,9 +140,7 @@ const RSVP = () => {
                                 )}
                             </button>
 
-                            <p className="rsvp-deadline">
-                                Por favor, confirme até <strong>1º de Abril de 2026</strong>
-                            </p>
+
                         </form>
                     )}
                 </motion.div>

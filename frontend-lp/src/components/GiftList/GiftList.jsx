@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy } from 'react-icons/fa';
+import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy, FaLightbulb, FaInfoCircle } from 'react-icons/fa';
 import api from '../../services/api';
 import './GiftList.css';
 
@@ -14,6 +14,7 @@ const GiftList = () => {
     const [formData, setFormData] = useState({ name: '', phone: '' });
     const [siteSettings, setSiteSettings] = useState(null);
     const [copied, setCopied] = useState(false);
+    const [showInfoBanner, setShowInfoBanner] = useState(true);
 
     useEffect(() => {
         fetchData();
@@ -132,8 +133,63 @@ const GiftList = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <h2>Lista de Presentes</h2>
-                    <p>Escolha um presente especial para nos ajudar a construir nosso lar</p>
+                    <p>Escolha algo especial para presentear os noivos</p>
                 </motion.div>
+
+                {/* Info Banner */}
+                <AnimatePresence>
+                    {showInfoBanner && (
+                        <motion.div
+                            className="gift-info-banner"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className="info-banner-header">
+                                <FaLightbulb className="info-icon" />
+                                <h3>Como presentear os noivos?</h3>
+                                <button
+                                    className="info-banner-close"
+                                    onClick={() => setShowInfoBanner(false)}
+                                    aria-label="Fechar"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                            <div className="info-banner-content">
+                                <div className="info-item">
+                                    <FaMoneyBillWave className="info-item-icon send-value" />
+                                    <div>
+                                        <strong>Enviar Valor</strong>
+                                        <p>Transfira o valor diretamente aos noivos</p>
+                                    </div>
+                                </div>
+                                <div className="info-item">
+                                    <FaShoppingCart className="info-item-icon buy" />
+                                    <div>
+                                        <strong>Comprar</strong>
+                                        <p>Compre o item diretamente na loja online através do link</p>
+                                    </div>
+                                </div>
+                                <div className="info-item">
+                                    <FaMapMarkerAlt className="info-item-icon address" />
+                                    <div>
+                                        <strong>Endereço</strong>
+                                        <p>Veja o endereço para entrega caso compre em outro local</p>
+                                    </div>
+                                </div>
+                                <div className="info-item">
+                                    <FaCheck className="info-item-icon confirm" />
+                                    <div>
+                                        <strong>Já Comprei</strong>
+                                        <p>Registre que você já adquiriu este presente</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Category Filter */}
                 <div className="category-filter">
@@ -189,7 +245,7 @@ const GiftList = () => {
                                     <button
                                         className="gift-btn send-value"
                                         onClick={() => openPixModal(gift)}
-                                        title="Enviar valor via Pix"
+                                        title="Enviar valor aos noivos"
                                     >
                                         <FaMoneyBillWave />
                                         <span>Enviar Valor</span>
@@ -201,7 +257,7 @@ const GiftList = () => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="gift-btn buy"
-                                            title="Comprar na loja"
+                                            title="Comprar direto na loja"
                                         >
                                             <FaShoppingCart />
                                             <span>Comprar</span>
@@ -211,7 +267,7 @@ const GiftList = () => {
                                     <button
                                         className="gift-btn address"
                                         onClick={() => openAddressModal(gift)}
-                                        title="Ver endereço para entrega"
+                                        title="Endereço de entrega"
                                     >
                                         <FaMapMarkerAlt />
                                         <span>Endereço</span>
@@ -221,7 +277,7 @@ const GiftList = () => {
                                 <button
                                     className="gift-btn-confirm"
                                     onClick={() => openPaymentModal(gift)}
-                                    title="Registrar que você comprou este presente"
+                                    title="Registre que você já adquiriu este presente"
                                 >
                                     <FaCheck /> Já comprei este presente
                                 </button>

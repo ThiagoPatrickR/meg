@@ -5,7 +5,6 @@ import './Navbar.css';
 
 const navLinks = [
     { href: '#home', label: 'Início' },
-    { href: '#historia', label: 'Nossa História' },
     { href: '#evento', label: 'Evento' },
     { href: '#presentes', label: 'Presentes' },
     { href: '#confirmar', label: 'Confirmar' },

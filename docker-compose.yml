@@ -5,89 +5,164 @@ services:
   backend:
     image: thiagopatrickr/meg:backend
     deploy:
+      mode: replicated
       replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
       restart_policy:
         condition: any
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=tpr_ia"
+        
+        # Router for Backend API
+        - "traefik.http.routers.meg-backend.rule=Host(`mg.tgbia.com`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.meg-backend.entrypoints=websecure"
+        - "traefik.http.routers.meg-backend.tls=true"
+        - "traefik.http.routers.meg-backend.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.meg-backend.service=meg-backend"
+        
+        # Router for Admin Backend API (Same service, different domain)
+        - "traefik.http.routers.meg-backend-admin.rule=Host(`adminmg.tgbia.com`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.meg-backend-admin.entrypoints=websecure"
+        - "traefik.http.routers.meg-backend-admin.tls=true"
+        - "traefik.http.routers.meg-backend-admin.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.meg-backend-admin.service=meg-backend"
+
+        - "traefik.http.services.meg-backend.loadbalancer.server.port=3333"
+        - "traefik.http.services.meg-backend.loadbalancer.passHostHeader=true"
+
+        # Middleware: CORS
+        - "traefik.http.middlewares.meg_cors.headers.accessControlAllowOriginList=https://mg.tgbia.com,https://adminmg.tgbia.com"
+        - "traefik.http.middlewares.meg_cors.headers.accessControlAllowMethods=GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+        - "traefik.http.middlewares.meg_cors.headers.accessControlAllowHeaders=Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        - "traefik.http.middlewares.meg_cors.headers.accessControlAllowCredentials=true"
+        
+        # Middleware: Security Headers
+        - "traefik.http.middlewares.meg_headers.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN"
+        - "traefik.http.middlewares.meg_headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+        - "traefik.http.middlewares.meg_headers.headers.customResponseHeaders.X-XSS-Protection=1; mode=block"
+        - "traefik.http.middlewares.meg_headers.headers.customResponseHeaders.Strict-Transport-Security=max-age=31536000; includeSubdomains;"
+        - "traefik.http.middlewares.meg_headers.headers.customResponseHeaders.Referrer-Policy=no-referrer-when-downgrade"
+        
+        # Middleware: Compression & Body Size
+        - "traefik.http.middlewares.meg_compress.compress=true"
+        - "traefik.http.middlewares.meg_body_size.buffering.maxRequestBodyBytes=262144000"
+
+        # Apply Middlewares to Routers
+        - "traefik.http.routers.meg-backend.middlewares=meg_cors,meg_headers,meg_compress,meg_body_size"
+        - "traefik.http.routers.meg-backend-admin.middlewares=meg_cors,meg_headers,meg_compress,meg_body_size"
+
     environment:
       - NODE_ENV=production
       - PORT=3333
       - DB_DIALECT=postgres
-      - DB_HOST=${DB_HOST:-db}
-      - DB_PORT=${DB_PORT:-5432}
-      - DB_USER=${DB_USER:-postgres}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME:-meg}
+      - DB_NAME=${DB_NAME}
       - JWT_SECRET=${JWT_SECRET}
       - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
       - MP_PUBLIC_KEY=${MP_PUBLIC_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL}
       - ADMIN_URL=${ADMIN_URL}
+      - UPLOAD_PATH=/app/uploads
     volumes:
-      - ./uploads:/app/uploads
+      - uploads_data:/app/uploads
     networks:
-      - meg-network
       - tpr_ia
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=tpr_ia"
-      - "traefik.http.routers.meg-backend-lp.rule=Host(`mg.tgbia.com`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.meg-backend-lp.entrypoints=websecure"
-      - "traefik.http.routers.meg-backend-lp.tls=true"
-      - "traefik.http.routers.meg-backend-lp.tls.certresolver=letsencryptresolver"
-      - "traefik.http.routers.meg-backend-lp.service=meg-backend"
-      - "traefik.http.routers.meg-backend-admin.rule=Host(`adminmg.tgbia.com`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.meg-backend-admin.entrypoints=websecure"
-      - "traefik.http.routers.meg-backend-admin.tls=true"
-      - "traefik.http.routers.meg-backend-admin.tls.certresolver=letsencryptresolver"
-      - "traefik.http.routers.meg-backend-admin.service=meg-backend"
-      - "traefik.http.services.meg-backend.loadbalancer.server.port=3333"
 
   # Frontend Landing Page
   frontend-lp:
     image: thiagopatrickr/meg:frontend-lp
     deploy:
+      mode: replicated
       replicas: 1
       restart_policy:
         condition: any
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=tpr_ia"
+        - "traefik.http.routers.meg-frontend-lp.rule=Host(`mg.tgbia.com`)"
+        - "traefik.http.routers.meg-frontend-lp.entrypoints=websecure"
+        - "traefik.http.routers.meg-frontend-lp.tls=true"
+        - "traefik.http.routers.meg-frontend-lp.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.meg-frontend-lp.service=meg-frontend-lp"
+        - "traefik.http.services.meg-frontend-lp.loadbalancer.server.port=80"
+        - "traefik.http.services.meg-frontend-lp.loadbalancer.passHostHeader=true"
+        
+        # Frontend Middlewares
+        - "traefik.http.middlewares.lp_headers.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN"
+        - "traefik.http.middlewares.lp_headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+        - "traefik.http.middlewares.lp_headers.headers.customResponseHeaders.X-XSS-Protection=1; mode=block"
+        - "traefik.http.middlewares.lp_headers.headers.customResponseHeaders.Strict-Transport-Security=max-age=31536000; includeSubdomains;"
+        - "traefik.http.middlewares.lp_headers.headers.customResponseHeaders.Referrer-Policy=no-referrer-when-downgrade"
+        - "traefik.http.middlewares.lp_compress.compress=true"
+        
+        - "traefik.http.routers.meg-frontend-lp.middlewares=lp_headers,lp_compress"
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
     networks:
-      - meg-network
       - tpr_ia
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=tpr_ia"
-      - "traefik.http.routers.meg-frontend-lp.rule=Host(`mg.tgbia.com`)"
-      - "traefik.http.routers.meg-frontend-lp.entrypoints=websecure"
-      - "traefik.http.routers.meg-frontend-lp.tls=true"
-      - "traefik.http.routers.meg-frontend-lp.tls.certresolver=letsencryptresolver"
-      - "traefik.http.routers.meg-frontend-lp.service=meg-frontend-lp"
-      - "traefik.http.services.meg-frontend-lp.loadbalancer.server.port=80"
 
   # Frontend Admin Panel
   frontend-admin:
     image: thiagopatrickr/meg:frontend-admin
     deploy:
+      mode: replicated
       replicas: 1
       restart_policy:
         condition: any
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=tpr_ia"
+        - "traefik.http.routers.meg-frontend-admin.rule=Host(`adminmg.tgbia.com`)"
+        - "traefik.http.routers.meg-frontend-admin.entrypoints=websecure"
+        - "traefik.http.routers.meg-frontend-admin.tls=true"
+        - "traefik.http.routers.meg-frontend-admin.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.meg-frontend-admin.service=meg-frontend-admin"
+        - "traefik.http.services.meg-frontend-admin.loadbalancer.server.port=80"
+        - "traefik.http.services.meg-frontend-admin.loadbalancer.passHostHeader=true"
+
+        # Admin Frontend Middlewares (reuse or separate)
+        - "traefik.http.middlewares.admin_headers.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN"
+        - "traefik.http.middlewares.admin_headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+        - "traefik.http.middlewares.admin_headers.headers.customResponseHeaders.X-XSS-Protection=1; mode=block"
+        - "traefik.http.middlewares.admin_headers.headers.customResponseHeaders.Strict-Transport-Security=max-age=31536000; includeSubdomains;"
+        - "traefik.http.middlewares.admin_headers.headers.customResponseHeaders.Referrer-Policy=no-referrer-when-downgrade"
+        - "traefik.http.middlewares.admin_compress.compress=true"
+        
+        - "traefik.http.routers.meg-frontend-admin.middlewares=admin_headers,admin_compress"
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
     networks:
-      - meg-network
       - tpr_ia
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=tpr_ia"
-      - "traefik.http.routers.meg-frontend-admin.rule=Host(`adminmg.tgbia.com`)"
-      - "traefik.http.routers.meg-frontend-admin.entrypoints=websecure"
-      - "traefik.http.routers.meg-frontend-admin.tls=true"
-      - "traefik.http.routers.meg-frontend-admin.tls.certresolver=letsencryptresolver"
-      - "traefik.http.routers.meg-frontend-admin.service=meg-frontend-admin"
-      - "traefik.http.services.meg-frontend-admin.loadbalancer.server.port=80"
 
 networks:
-  meg-network:
-    driver: overlay
   tpr_ia:
+    name: tpr_ia
     external: true
 
 volumes:
-  uploads:
+  uploads_data:
+
+

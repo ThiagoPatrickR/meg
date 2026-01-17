@@ -11,6 +11,7 @@ import MessagesList from './pages/MessagesList/MessagesList';
 import Payments from './pages/Payments/Payments';
 import ChatbotConfig from './pages/ChatbotConfig/ChatbotConfig';
 import Settings from './pages/Settings/Settings';
+import Photos from './pages/Photos/Photos';
 import './styles/global.css';
 
 function PrivateRoute({ children }) {
@@ -96,6 +97,14 @@ function App() {
             <PrivateRoute>
               <AdminLayout>
                 <ChatbotConfig />
+              </AdminLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/photos" element={
+            <PrivateRoute>
+              <AdminLayout>
+                <Photos />
               </AdminLayout>
             </PrivateRoute>
           } />

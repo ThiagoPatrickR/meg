@@ -470,6 +470,212 @@
     margin-top: 20px;
 }
 
+/* Info Banner */
+.gift-info-banner {
+    background: linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%);
+    border: 1px solid rgba(184, 134, 11, 0.3);
+    border-left: 4px solid #DAA520;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 25px 0;
+    box-shadow: 0 2px 8px rgba(218, 165, 32, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.info-banner-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.info-banner-header .info-icon {
+    color: #DAA520;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.info-banner-header h3 {
+    color: #6B4423;
+    font-size: 1.15rem;
+    margin: 0;
+    flex: 1;
+    font-weight: 600;
+}
+
+.info-banner-close {
+    background: rgba(107, 68, 35, 0.06);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: #6B4423;
+    flex-shrink: 0;
+}
+
+.info-banner-close:hover {
+    background: rgba(107, 68, 35, 0.12);
+    transform: rotate(90deg);
+}
+
+.info-banner-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 12px 14px;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+    border: 1px solid rgba(218, 165, 32, 0.1);
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.info-item-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.info-item-icon.send-value {
+    color: var(--verde-esmeralda);
+}
+
+.info-item-icon.buy {
+    color: #E91E63;
+}
+
+.info-item-icon.address {
+    color: #757575;
+}
+
+.info-item-icon.confirm {
+    color: #4CAF50;
+}
+
+.info-item strong {
+    display: block;
+    color: var(--verde-escuro);
+    margin-bottom: 3px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.info-item p {
+    color: #666;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Enhanced Button Tooltips */
+.gift-btn {
+    position: relative;
+}
+
+.gift-btn::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    white-space: normal;
+    max-width: 180px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.gift-btn::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.gift-btn:hover::after,
+.gift-btn:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.gift-btn-confirm {
+    position: relative;
+}
+
+/* Custom tooltip disabled - using native browser tooltip instead
+.gift-btn-confirm::after {
+    content: "Registre que você já adquiriu este presente";
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: rgba(2, 104, 65, 0.95);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    z-index: 100;
+    max-width: 200px;
+    white-space: normal;
+    text-align: center;
+}
+
+
+.gift-btn-confirm::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-bottom-color: rgba(2, 104, 65, 0.95);
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    z-index: 100;
+}
+
+.gift-btn-confirm:hover::after,
+.gift-btn-confirm:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+*/
+
 @media (max-width: 768px) {
     .gifts-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -477,6 +683,18 @@
 
     .modal-content {
         padding: 30px 20px;
+    }
+
+    .info-banner-content {
+        grid-template-columns: 1fr;
+    }
+
+    /* Hide tooltips on mobile (touch devices) */
+    .gift-btn::after,
+    .gift-btn::before,
+    .gift-btn-confirm::after,
+    .gift-btn-confirm::before {
+        display: none;
     }
 }
 
@@ -496,5 +714,17 @@
 
     .gift-btn svg {
         font-size: 1.4rem;
+    }
+
+    .gift-info-banner {
+        padding: 20px 15px;
+    }
+
+    .info-banner-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .info-item {
+        padding: 12px;
     }
 }

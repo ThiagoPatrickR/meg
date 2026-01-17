@@ -1,17 +1,27 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import api from '../../services/api';
 import './Gallery.css';
 
-// Placeholder images for the gallery
-const galleryImages = [
-    { id: 1, placeholder: true, caption: 'Foto 1 - Placeholder' },
-    { id: 2, placeholder: true, caption: 'Foto 2 - Placeholder' },
-    { id: 3, placeholder: true, caption: 'Foto 3 - Placeholder' },
-    { id: 4, placeholder: true, caption: 'Foto 4 - Placeholder' },
-    { id: 5, placeholder: true, caption: 'Foto 5 - Placeholder' },
-    { id: 6, placeholder: true, caption: 'Foto 6 - Placeholder' },
-];
-
 const Gallery = () => {
+    const [photos, setPhotos] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchPhotos();
+    }, []);
+
+    const fetchPhotos = async () => {
+        try {
+            const response = await api.get('/photos');
+            setPhotos(response.data);
+        } catch (error) {
+            console.error('Erro ao carregar fotos:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <section className="gallery" id="fotos">
             <div className="container">
@@ -26,32 +36,43 @@ const Gallery = () => {
                     <p>Momentos especiais da nossa jornada juntos</p>
                 </motion.div>
 
-                <div className="gallery-grid">
-                    {galleryImages.map((image, index) => (
-                        <motion.div
-                            key={image.id}
-                            className={`gallery-item ${index === 0 ? 'large' : ''}`}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                        >
-                            <div className="gallery-placeholder">
-                                <span className="placeholder-icon">📷</span>
-                                <span className="placeholder-text">Ensaio Pré-Wedding</span>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-
-                <motion.div
-                    className="gallery-note"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                >
-                    <p>✨ Em breve, mais fotos da nossa história serão adicionadas aqui!</p>
-                </motion.div>
+                {loading ? (
+                    <div className="gallery-loading">
+                        <p>Carregando fotos...</p>
+                    </div>
+                ) : photos.length > 0 ? (
+                    <div className="gallery-grid">
+                        {photos.map((photo, index) => (
+                            <motion.div
+                                key={photo.id}
+                                className={`gallery-item ${index === 0 ? 'large' : ''}`}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                            >
+                                <img
+                                    src={`${import.meta.env.VITE_API_URL?.replace('/api', '')}/uploads/${photo.image}`}
+                                    alt={photo.title || 'Foto do casal'}
+                                />
+                                {photo.title && (
+                                    <div className="gallery-caption">
+                                        <p>{photo.title}</p>
+                                    </div>
+                                )}
+                            </motion.div>
+                        ))}
+                    </div>
+                ) : (
+                    <motion.div
+                        className="gallery-empty"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                    >
+                        <p>Em breve, fotos especiais da nossa história serão compartilhadas aqui! 📷</p>
+                    </motion.div>
+                )}
             </div>
         </section>
     );

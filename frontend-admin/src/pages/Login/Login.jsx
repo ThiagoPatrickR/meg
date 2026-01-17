@@ -50,6 +50,7 @@ const Login = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="admin@casamento.com"
                             required
+                            autoComplete="email"
                         />
                     </div>
 
@@ -63,6 +64,7 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
                             required
+                            autoComplete="current-password"
                         />
                     </div>
 

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Gift, Payment } from '../models';
-import MercadoPagoService from '../services/MercadoPagoService';
 
 export const createPixPayment = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -23,31 +22,27 @@ export const createPixPayment = async (req: Request, res: Response): Promise<voi
             return;
         }
 
-        // Create payment in Mercado Pago
-        const mpPayment = await MercadoPagoService.createPixPayment({
-            amount: Number(gift.price),
-            description: `Presente de casamento: ${gift.title}`,
-            payerEmail,
-            payerName,
-        });
+        // Generate a unique ID for the manual payment
+        const manualPaymentId = `MANUAL-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
         // Save payment record
         const payment = await Payment.create({
             giftId: gift.id,
-            mpPaymentId: String(mpPayment.id),
+            mpPaymentId: manualPaymentId,
             payerEmail,
             payerName,
             amount: Number(gift.price),
             status: 'pending',
             paymentMethod: 'pix',
-            pixQrCode: mpPayment.qrCode || null,
-            pixQrCodeBase64: mpPayment.qrCodeBase64 || null,
+            pixQrCode: null,
+            pixQrCodeBase64: null,
         });
 
         res.status(201).json({
             payment,
-            pixCode: mpPayment.qrCode,
-            pixQrCodeBase64: mpPayment.qrCodeBase64,
+            pixCode: null,
+            pixQrCodeBase64: null,
+            message: 'Aguardando confirmação manual do pagamento via Pix.'
         });
     } catch (error) {
         console.error('Erro ao criar pagamento Pix:', error);
@@ -56,123 +51,13 @@ export const createPixPayment = async (req: Request, res: Response): Promise<voi
 };
 
 export const createCardPayment = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { giftId, payerEmail, token, installments, paymentMethodId } = req.body;
-
-        if (!giftId || !payerEmail || !token) {
-            res.status(400).json({ error: 'Dados de pagamento incompletos' });
-            return;
-        }
-
-        const gift = await Gift.findByPk(giftId);
-
-        if (!gift) {
-            res.status(404).json({ error: 'Presente não encontrado' });
-            return;
-        }
-
-        if (gift.purchased) {
-            res.status(400).json({ error: 'Este presente já foi comprado' });
-            return;
-        }
-
-        // Create payment in Mercado Pago
-        const mpPayment = await MercadoPagoService.createCardPayment({
-            amount: Number(gift.price),
-            description: `Presente de casamento: ${gift.title}`,
-            payerEmail,
-            token,
-            installments: installments || 1,
-            paymentMethodId: paymentMethodId || 'visa',
-        });
-
-        // Determine status
-        let status: 'pending' | 'approved' | 'rejected' = 'pending';
-        if (mpPayment.status === 'approved') {
-            status = 'approved';
-            // Mark gift as purchased
-            await gift.update({
-                purchased: true,
-                purchasedBy: payerEmail,
-                purchasedByEmail: payerEmail,
-                purchasedAt: new Date(),
-                paymentMethod: 'card',
-            });
-        } else if (mpPayment.status === 'rejected') {
-            status = 'rejected';
-        }
-
-        // Save payment record
-        const payment = await Payment.create({
-            giftId: gift.id,
-            mpPaymentId: String(mpPayment.id),
-            payerEmail,
-            payerName: null,
-            amount: Number(gift.price),
-            status,
-            paymentMethod: 'card',
-        });
-
-        res.status(201).json({
-            payment,
-            status: mpPayment.status,
-            statusDetail: mpPayment.statusDetail,
-        });
-    } catch (error) {
-        console.error('Erro ao criar pagamento com cartão:', error);
-        res.status(500).json({ error: 'Erro ao processar pagamento' });
-    }
+    res.status(501).json({ error: 'Pagamento com cartão desabilitado temporariamente' });
 };
 
 export const webhook = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { type, data } = req.body;
-
-        if (type === 'payment') {
-            const paymentId = data.id;
-
-            // Get payment status from Mercado Pago
-            const mpStatus = await MercadoPagoService.getPaymentStatus(String(paymentId));
-
-            // Find payment in database
-            const payment = await Payment.findOne({
-                where: { mpPaymentId: String(paymentId) },
-            });
-
-            if (payment) {
-                let status: 'pending' | 'approved' | 'rejected' | 'cancelled' = 'pending';
-
-                if (mpStatus.status === 'approved') {
-                    status = 'approved';
-                } else if (mpStatus.status === 'rejected') {
-                    status = 'rejected';
-                } else if (mpStatus.status === 'cancelled') {
-                    status = 'cancelled';
-                }
-
-                await payment.update({ status });
-
-                // If approved, mark gift as purchased
-                if (status === 'approved') {
-                    const gift = await Gift.findByPk(payment.giftId);
-                    if (gift && !gift.purchased) {
-                        await gift.update({
-                            purchased: true,
-                            purchasedBy: payment.payerName || payment.payerEmail || 'Via Pagamento',
-                            purchasedByEmail: payment.payerEmail,
-                            purchasedAt: new Date(),
-                            paymentMethod: payment.paymentMethod,
-                        });
-                    }
-                }
-            }
-        }
-
-        res.status(200).send('OK');
-    } catch (error) {
-        console.error('Erro no webhook:', error);
-        res.status(500).json({ error: 'Erro ao processar webhook' });
-    }
+    // Webhook disabled as we are not using Mercado Pago
+    console.log('Webhook received but ignored (Manual Payment Mode):', req.body);
+    res.status(200).send('OK');
 };
 
 export const index = async (req: Request, res: Response): Promise<void> => {
@@ -205,37 +90,7 @@ export const checkStatus = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        // If has MP payment ID, check status
-        if (payment.mpPaymentId) {
-            const mpStatus = await MercadoPagoService.getPaymentStatus(payment.mpPaymentId);
-
-            let status: 'pending' | 'approved' | 'rejected' | 'cancelled' = payment.status;
-
-            if (mpStatus.status === 'approved') {
-                status = 'approved';
-            } else if (mpStatus.status === 'rejected') {
-                status = 'rejected';
-            }
-
-            if (status !== payment.status) {
-                await payment.update({ status });
-
-                // If approved, mark gift as purchased
-                if (status === 'approved') {
-                    const gift = await Gift.findByPk(payment.giftId);
-                    if (gift && !gift.purchased) {
-                        await gift.update({
-                            purchased: true,
-                            purchasedBy: payment.payerName || payment.payerEmail || 'Via Pagamento',
-                            purchasedByEmail: payment.payerEmail,
-                            purchasedAt: new Date(),
-                            paymentMethod: payment.paymentMethod,
-                        });
-                    }
-                }
-            }
-        }
-
+        // Return current status from DB (manual update required)
         res.json(payment);
     } catch (error) {
         console.error('Erro ao verificar status:', error);

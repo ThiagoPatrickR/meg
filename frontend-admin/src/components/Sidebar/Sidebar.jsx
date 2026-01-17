@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
     FaHome, FaGift, FaTags, FaUsers, FaEnvelope,
-    FaCreditCard, FaRobot, FaSignOutAlt, FaHeart, FaCog, FaTimes
+    FaCreditCard, FaRobot, FaSignOutAlt, FaHeart, FaCog, FaTimes, FaImage
 } from 'react-icons/fa';
 import './Sidebar.css';
 
@@ -12,6 +12,7 @@ const menuItems = [
     { path: '/categories', icon: <FaTags />, label: 'Categorias' },
     { path: '/rsvp', icon: <FaUsers />, label: 'Confirmações' },
     { path: '/messages', icon: <FaEnvelope />, label: 'Recados' },
+    { path: '/photos', icon: <FaImage />, label: 'Fotos' },
     { path: '/payments', icon: <FaCreditCard />, label: 'Pagamentos' },
     { path: '/chatbot', icon: <FaRobot />, label: 'Chatbot' },
     { path: '/settings', icon: <FaCog />, label: 'Configurações' },

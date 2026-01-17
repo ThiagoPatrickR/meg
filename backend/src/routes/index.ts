@@ -8,6 +8,7 @@ import PaymentController from '../controllers/PaymentController';
 import ChatController from '../controllers/ChatController';
 import DashboardController from '../controllers/DashboardController';
 import SiteConfigController from '../controllers/SiteConfigController';
+import PhotoController from '../controllers/PhotoController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { upload } from '../middlewares/uploadMiddleware';
 
@@ -41,6 +42,9 @@ router.post('/payments/pix', PaymentController.createPixPayment);
 router.post('/payments/card', PaymentController.createCardPayment);
 router.post('/payments/webhook', PaymentController.webhook);
 router.get('/payments/:id/status', PaymentController.checkStatus);
+
+// Photos (public read)
+router.get('/photos', PhotoController.index);
 
 // Chat (public)
 router.post('/chat', ChatController.chat);
@@ -88,4 +92,13 @@ router.put('/admin/chat/config', authMiddleware, ChatController.updateConfig);
 router.get('/admin/settings', authMiddleware, SiteConfigController.getSettings);
 router.put('/admin/settings', authMiddleware, SiteConfigController.updateSettings);
 
+// Photos (admin CRUD)
+router.post('/admin/photos', authMiddleware, upload.single('image'), PhotoController.store);
+router.put('/admin/photos/:id', authMiddleware, upload.single('image'), PhotoController.update);
+router.delete('/admin/photos/:id', authMiddleware, PhotoController.destroy);
+router.put('/admin/photos/reorder', authMiddleware, PhotoController.reorder);
+router.put('/admin/photos/:id/move-up', authMiddleware, PhotoController.moveUp);
+router.put('/admin/photos/:id/move-down', authMiddleware, PhotoController.moveDown);
+
 export default router;
+

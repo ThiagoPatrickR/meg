@@ -18,55 +18,7 @@ const EventInfo = () => {
                 </motion.div>
 
                 <div className="events-grid">
-                    {/* Cerimônia Civil */}
-                    <motion.div
-                        className="event-card"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <div className="event-card-header">
-                            <div className="event-icon">💒</div>
-                            <h3>Cerimônia Civil</h3>
-                        </div>
 
-                        <div className="event-details">
-                            <div className="event-detail-item">
-                                <FaClock />
-                                <div>
-                                    <strong>Data e Horário</strong>
-                                    <span>18 de Abril de 2026 - Horário a confirmar</span>
-                                </div>
-                            </div>
-
-                            <div className="event-detail-item">
-                                <FaMapMarkerAlt />
-                                <div>
-                                    <strong>Local</strong>
-                                    <span>E&P Eventos</span>
-                                </div>
-                            </div>
-
-                            <div className="event-detail-item">
-                                <FaTshirt />
-                                <div>
-                                    <strong>Dress Code</strong>
-                                    <span>Traje social - A confirmar</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="event-map-placeholder">
-                            <FaMapMarkerAlt />
-                            <span>Mapa será exibido aqui</span>
-                        </div>
-
-                        <div className="event-note">
-                            <strong>⏰ Pontualidade</strong>
-                            <p>Por favor, chegue com 30 minutos de antecedência.</p>
-                        </div>
-                    </motion.div>
 
                     {/* Chá de Panela */}
                     <motion.div
@@ -110,7 +62,7 @@ const EventInfo = () => {
                                 <FaGift />
                                 <div>
                                     <strong>Dinâmica</strong>
-                                    <span>Teremos brincadeiras e surpresas!</span>
+                                    <span>Show, brincadeiras, solteiros e muita comida e cachaça</span>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +90,7 @@ const EventInfo = () => {
 
                         <div className="event-note highlight">
                             <strong>🎁 Dica</strong>
-                            <p>Confira nossa lista de presentes para sugestões!</p>
+                            <p>Confira nossa lista de presentes.</p>
                         </div>
                     </motion.div>
                 </div>
