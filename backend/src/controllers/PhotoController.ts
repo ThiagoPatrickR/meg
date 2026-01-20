@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Photo } from '../models';
+import { Op } from 'sequelize';
 
 export const index = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -145,17 +146,21 @@ export const moveUp = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Find the photo that's immediately before this one
+        // Find the photo that's immediately before this one (highest order less than current)
         const previousPhoto = await Photo.findOne({
             where: {
-                order: photo.order - 1,
+                order: {
+                    [Op.lt]: photo.order,
+                },
             },
+            order: [['order', 'DESC']],
         });
 
         if (previousPhoto) {
             // Swap orders
-            await previousPhoto.update({ order: photo.order });
-            await photo.update({ order: photo.order - 1 });
+            const tempOrder = photo.order;
+            await photo.update({ order: previousPhoto.order });
+            await previousPhoto.update({ order: tempOrder });
         }
 
         const updatedPhotos = await Photo.findAll({
@@ -179,17 +184,21 @@ export const moveDown = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Find the photo that's immediately after this one
+        // Find the photo that's immediately after this one (lowest order greater than current)
         const nextPhoto = await Photo.findOne({
             where: {
-                order: photo.order + 1,
+                order: {
+                    [Op.gt]: photo.order,
+                },
             },
+            order: [['order', 'ASC']],
         });
 
         if (nextPhoto) {
             // Swap orders
-            await nextPhoto.update({ order: photo.order });
-            await photo.update({ order: photo.order + 1 });
+            const tempOrder = photo.order;
+            await photo.update({ order: nextPhoto.order });
+            await nextPhoto.update({ order: tempOrder });
         }
 
         const updatedPhotos = await Photo.findAll({

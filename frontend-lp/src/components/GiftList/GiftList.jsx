@@ -9,12 +9,14 @@ const GiftList = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [categoryLoading, setCategoryLoading] = useState(false);
     const [selectedGift, setSelectedGift] = useState(null);
     const [modalType, setModalType] = useState(null); // 'payment' | 'address' | 'pix' | 'success'
     const [formData, setFormData] = useState({ name: '', phone: '' });
     const [siteSettings, setSiteSettings] = useState(null);
     const [copied, setCopied] = useState(false);
     const [showInfoBanner, setShowInfoBanner] = useState(true);
+    const [sendingValue, setSendingValue] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -41,6 +43,16 @@ const GiftList = () => {
         ? gifts.filter(g => g.categoryId === selectedCategory)
         : gifts;
 
+    const handleCategoryChange = (categoryId) => {
+        if (categoryId === selectedCategory) return;
+        setCategoryLoading(true);
+        // Pequeno delay para mostrar o loading e dar feedback visual
+        setTimeout(() => {
+            setSelectedCategory(categoryId);
+            setCategoryLoading(false);
+        }, 150);
+    };
+
     const openPaymentModal = (gift) => {
         setSelectedGift(gift);
         setModalType('payment');
@@ -51,6 +63,24 @@ const GiftList = () => {
         setSelectedGift(gift);
         setModalType('pix');
         setCopied(false);
+    };
+
+    const handleSendValue = async (gift) => {
+        try {
+            setSendingValue(true);
+            const response = await api.post('/infinitepay/checkout', {
+                giftId: gift.id
+            });
+            // Redireciona para o checkout da InfinitePay
+            window.location.href = response.data.checkoutUrl;
+        } catch (error) {
+            console.error('Erro ao gerar checkout:', error);
+            // Se falhar, abre o modal de PIX manual como fallback
+            alert('Erro ao gerar link de pagamento. Usando método alternativo.');
+            openPixModal(gift);
+        } finally {
+            setSendingValue(false);
+        }
     };
 
     const openAddressModal = (gift) => {
@@ -172,11 +202,17 @@ const GiftList = () => {
                                         <p>Compre o item diretamente na loja online através do link</p>
                                     </div>
                                 </div>
-                                <div className="info-item">
+                                <div className="info-item address-info">
                                     <FaMapMarkerAlt className="info-item-icon address" />
                                     <div>
-                                        <strong>Endereço</strong>
-                                        <p>Veja o endereço para entrega caso compre em outro local</p>
+                                        <strong>Endereço para Entrega</strong>
+                                        <p className="address-text">
+                                            {siteSettings?.street || 'A confirmar'}
+                                            {siteSettings?.neighborhood && ` - ${siteSettings.neighborhood}`}
+                                            {siteSettings?.city && `, ${siteSettings.city}`}
+                                            {siteSettings?.state && `/${siteSettings.state}`}
+                                            {siteSettings?.zipCode && ` - CEP: ${siteSettings.zipCode}`}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="info-item">
@@ -195,7 +231,8 @@ const GiftList = () => {
                 <div className="category-filter">
                     <button
                         className={`category-btn ${!selectedCategory ? 'active' : ''}`}
-                        onClick={() => setSelectedCategory(null)}
+                        onClick={() => handleCategoryChange(null)}
+                        disabled={categoryLoading}
                     >
                         Todos
                     </button>
@@ -203,7 +240,8 @@ const GiftList = () => {
                         <button
                             key={cat.id}
                             className={`category-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat.id)}
+                            onClick={() => handleCategoryChange(cat.id)}
+                            disabled={categoryLoading}
                         >
                             {cat.icon} {cat.name}
                         </button>
@@ -212,81 +250,92 @@ const GiftList = () => {
 
                 {/* Gifts Grid */}
                 <div className="gifts-grid">
-                    <AnimatePresence>
-                        {filteredGifts.map((gift, index) => (
-                            <motion.div
-                                key={gift.id}
-                                className="gift-card"
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ duration: 0.4, delay: index * 0.1 }}
-                                layout
-                            >
-                                <div className="gift-image">
-                                    {gift.image ? (
-                                        <img
-                                            src={`${import.meta.env.VITE_API_URL?.replace('/api', '')}/uploads/${gift.image}`}
-                                            alt={gift.title}
-                                        />
-                                    ) : (
-                                        <div className="gift-placeholder">
-                                            {gift.category?.icon || '🎁'}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="gift-info">
-                                    <h3 className="gift-title">{gift.title}</h3>
-                                    <p className="gift-price">{formatPrice(gift.price)}</p>
-                                </div>
-
-                                <div className="gift-actions">
-                                    <button
-                                        className="gift-btn send-value"
-                                        onClick={() => openPixModal(gift)}
-                                        title="Enviar valor aos noivos"
-                                    >
-                                        <FaMoneyBillWave />
-                                        <span>Enviar Valor</span>
-                                    </button>
-
-                                    {gift.purchaseLink && (
-                                        <a
-                                            href={gift.purchaseLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="gift-btn buy"
-                                            title="Comprar direto na loja"
-                                        >
-                                            <FaShoppingCart />
-                                            <span>Comprar</span>
-                                        </a>
-                                    )}
-
-                                    <button
-                                        className="gift-btn address"
-                                        onClick={() => openAddressModal(gift)}
-                                        title="Endereço de entrega"
-                                    >
-                                        <FaMapMarkerAlt />
-                                        <span>Endereço</span>
-                                    </button>
-                                </div>
-
-                                <button
-                                    className="gift-btn-confirm"
-                                    onClick={() => openPaymentModal(gift)}
-                                    title="Registre que você já adquiriu este presente"
+                    {categoryLoading ? (
+                        <div className="category-loading">
+                            <div className="loading-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    ) : (
+                        <AnimatePresence mode="wait">
+                            {filteredGifts.map((gift, index) => (
+                                <motion.div
+                                    key={gift.id}
+                                    className="gift-card"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                                    layout
                                 >
-                                    <FaCheck /> Já comprei este presente
-                                </button>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
+                                    <div className="gift-image">
+                                        {gift.image ? (
+                                            <img
+                                                src={`${import.meta.env.VITE_API_URL?.replace('/api', '')}/uploads/${gift.image}`}
+                                                alt={gift.title}
+                                            />
+                                        ) : (
+                                            <div className="gift-placeholder">
+                                                {gift.category?.icon || '🎁'}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="gift-info">
+                                        <h3 className="gift-title">{gift.title}</h3>
+                                        <p className="gift-price">{formatPrice(gift.price)}</p>
+                                    </div>
+
+                                    <div className="gift-actions">
+                                        <button
+                                            className="gift-btn send-value"
+                                            onClick={() => handleSendValue(gift)}
+                                            title="Enviar valor aos noivos"
+                                            disabled={sendingValue}
+                                        >
+                                            <FaMoneyBillWave />
+                                            <span>{sendingValue ? 'Aguarde...' : 'Enviar Valor'}</span>
+                                        </button>
+
+                                        {gift.purchaseLink && (
+                                            <a
+                                                href={gift.purchaseLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="gift-btn buy"
+                                                title="Comprar direto na loja"
+                                            >
+                                                <FaShoppingCart />
+                                                <span>Comprar</span>
+                                            </a>
+                                        )}
+
+                                        <button
+                                            className="gift-btn address"
+                                            onClick={() => openAddressModal(gift)}
+                                            title="Endereço de entrega"
+                                        >
+                                            <FaMapMarkerAlt />
+                                            <span>Endereço</span>
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        className="gift-btn-confirm"
+                                        onClick={() => openPaymentModal(gift)}
+                                        title="Registre que você já adquiriu este presente"
+                                    >
+                                        <FaCheck /> Já comprei este presente
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    )}
                 </div>
 
-                {filteredGifts.length === 0 && (
+                {!categoryLoading && filteredGifts.length === 0 && (
                     <div className="no-gifts">
                         <p>Nenhum presente disponível nesta categoria.</p>
                     </div>

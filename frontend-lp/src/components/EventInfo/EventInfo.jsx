@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FaMapMarkerAlt, FaClock, FaParking, FaTshirt, FaGift } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaClock, FaParking } from 'react-icons/fa';
 import './EventInfo.css';
 
 const EventInfo = () => {
@@ -29,8 +29,8 @@ const EventInfo = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
                         <div className="event-card-header">
-                            <div className="event-icon">🫖</div>
-                            <h3>Chá de Panela</h3>
+                            <div className="event-icon">💍</div>
+                            <h3>Casamento Marcelo e Gabi</h3>
                         </div>
 
                         <div className="event-details">
@@ -58,13 +58,6 @@ const EventInfo = () => {
                                 </div>
                             </div>
 
-                            <div className="event-detail-item">
-                                <FaGift />
-                                <div>
-                                    <strong>Dinâmica</strong>
-                                    <span>Show, brincadeiras, solteiros e muita comida e cachaça</span>
-                                </div>
-                            </div>
                         </div>
 
                         <div className="event-map">

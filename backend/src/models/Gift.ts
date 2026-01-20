@@ -108,6 +108,20 @@ Gift.init(
         sequelize,
         tableName: 'gifts',
         modelName: 'Gift',
+        indexes: [
+            {
+                name: 'idx_gifts_category_id',
+                fields: ['category_id'],
+            },
+            {
+                name: 'idx_gifts_purchased',
+                fields: ['purchased'],
+            },
+            {
+                name: 'idx_gifts_category_purchased',
+                fields: ['category_id', 'purchased'],
+            },
+        ],
     }
 );
 

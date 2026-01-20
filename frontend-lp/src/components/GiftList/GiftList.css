@@ -198,6 +198,56 @@
     color: var(--gray);
 }
 
+/* Category Loading */
+.category-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.loading-dots span {
+    width: 12px;
+    height: 12px;
+    background: var(--verde-esmeralda);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.category-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;
@@ -582,6 +632,17 @@
     font-size: 0.82rem;
     line-height: 1.4;
     margin: 0;
+}
+
+/* Address Info Special Styling */
+.info-item.address-info {
+    background: rgba(2, 104, 65, 0.08);
+    border: 1px solid rgba(2, 104, 65, 0.2);
+}
+
+.info-item.address-info .address-text {
+    color: var(--verde-escuro);
+    font-weight: 500;
 }
 
 /* Enhanced Button Tooltips */

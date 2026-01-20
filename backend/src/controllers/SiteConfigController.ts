@@ -10,12 +10,12 @@ export const getPublicSettings = async (req: Request, res: Response): Promise<vo
             // Retorna valores padrão se não houver configuração
             res.json({
                 recipientName: 'Marcelo e Gabriela',
-                street: 'A confirmar',
-                complement: null,
-                neighborhood: 'A confirmar',
-                city: 'A confirmar',
+                street: 'Av. Federal, nº 300 - Monte Hermon Residence, Apto 901-A',
+                complement: 'Apto 901-A',
+                neighborhood: 'Maracananzinho',
+                city: 'Anápolis',
                 state: 'GO',
-                zipCode: 'A confirmar',
+                zipCode: '75080-045',
                 deliveryNote: 'Após a compra, por favor nos avise para registrarmos o presente!',
                 pixKey: null,
                 pixKeyType: null,
@@ -50,11 +50,11 @@ export const getSettings = async (req: Request, res: Response): Promise<void> =>
             // Cria configuração padrão
             config = await SiteConfig.create({
                 recipientName: 'Marcelo e Gabriela',
-                street: '',
-                neighborhood: '',
-                city: '',
+                street: 'Av. Federal, nº 300 - Monte Hermon Residence, Apto 901-A',
+                neighborhood: 'Maracananzinho',
+                city: 'Anápolis',
                 state: 'GO',
-                zipCode: '',
+                zipCode: '75080-045',
             });
         }
 

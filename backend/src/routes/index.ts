@@ -9,6 +9,7 @@ import ChatController from '../controllers/ChatController';
 import DashboardController from '../controllers/DashboardController';
 import SiteConfigController from '../controllers/SiteConfigController';
 import PhotoController from '../controllers/PhotoController';
+import InfinitePayController from '../controllers/InfinitePayController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { upload } from '../middlewares/uploadMiddleware';
 
@@ -48,6 +49,11 @@ router.get('/photos', PhotoController.index);
 
 // Chat (public)
 router.post('/chat', ChatController.chat);
+
+// InfinitePay (public checkout)
+router.post('/infinitepay/checkout', InfinitePayController.createCheckout);
+router.post('/infinitepay/webhook', InfinitePayController.webhook);
+router.get('/infinitepay/verify/:giftId', InfinitePayController.verifyPayment);
 
 // ====== ADMIN ROUTES (Protected) ======
 
