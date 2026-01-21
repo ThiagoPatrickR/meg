@@ -38,7 +38,7 @@ const EventInfo = () => {
                                 <FaClock />
                                 <div>
                                     <strong>Data e Horário</strong>
-                                    <span>18 de Abril de 2026 - 13:00</span>
+                                    <span>18 de Abril de 2026 - 16:00</span>
                                 </div>
                             </div>
 

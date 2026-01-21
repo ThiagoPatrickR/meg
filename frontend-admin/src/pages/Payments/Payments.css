@@ -4,12 +4,33 @@
     font-size: 0.8rem;
 }
 
+.payment-method-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
 .method-badge {
     display: inline-block;
     padding: 4px 10px;
     background: var(--light-gray);
     border-radius: 20px;
     font-size: 0.85rem;
+}
+
+.receipt-link {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.receipt-link:hover {
+    text-decoration: underline;
 }
 
 .empty-state {

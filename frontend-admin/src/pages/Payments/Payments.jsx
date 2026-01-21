@@ -107,11 +107,24 @@ const Payments = ({ onMenuClick }) => {
                                             </td>
                                             <td>{formatCurrency(payment.amount)}</td>
                                             <td>
-                                                <span className="method-badge">
-                                                    {payment.paymentMethod === 'pix' ? '📱 Pix' :
-                                                        payment.paymentMethod === 'card' ? '💳 Cartão' :
-                                                            '📦 Externo'}
-                                                </span>
+                                                <div className="payment-method-cell">
+                                                    <span className="method-badge">
+                                                        {payment.paymentMethod === 'pix' ? '📱 Pix' :
+                                                            payment.paymentMethod === 'card' ? '💳 Cartão' :
+                                                                '📦 Externo'}
+                                                    </span>
+                                                    {payment.receiptUrl && (
+                                                        <a
+                                                            href={payment.receiptUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="receipt-link"
+                                                            title="Ver Recibo"
+                                                        >
+                                                            📄 Recibo
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td>{getStatusBadge(payment.status)}</td>
                                             <td>{new Date(payment.createdAt).toLocaleDateString('pt-BR')}</td>

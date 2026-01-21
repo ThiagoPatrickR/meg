@@ -9,7 +9,7 @@ export const getPublicSettings = async (req: Request, res: Response): Promise<vo
         if (!config) {
             // Retorna valores padrão se não houver configuração
             res.json({
-                recipientName: 'Marcelo e Gabriela',
+                recipientName: 'Marcelo e Gabriella',
                 street: 'Av. Federal, nº 300 - Monte Hermon Residence, Apto 901-A',
                 complement: 'Apto 901-A',
                 neighborhood: 'Maracananzinho',
@@ -49,7 +49,7 @@ export const getSettings = async (req: Request, res: Response): Promise<void> =>
         if (!config) {
             // Cria configuração padrão
             config = await SiteConfig.create({
-                recipientName: 'Marcelo e Gabriela',
+                recipientName: 'Marcelo e Gabriella',
                 street: 'Av. Federal, nº 300 - Monte Hermon Residence, Apto 901-A',
                 neighborhood: 'Maracananzinho',
                 city: 'Anápolis',
@@ -85,7 +85,7 @@ export const updateSettings = async (req: Request, res: Response): Promise<void>
 
         if (!config) {
             config = await SiteConfig.create({
-                recipientName: recipientName || 'Marcelo e Gabriela',
+                recipientName: recipientName || 'Marcelo e Gabriella',
                 street: street || '',
                 complement: complement || null,
                 neighborhood: neighborhood || '',

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { Gift } from '../models';
+import { Gift, Payment } from '../models';
 import InfinitePayService from '../services/InfinitePayService';
+import { io } from '../server';
+
 
 /**
  * Creates a checkout link for a gift and returns it
@@ -114,16 +116,53 @@ export const webhook = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Mark as purchased
+        // Create or update payment record
+        const paymentData = {
+            giftId: gift.id,
+            amount: payload.amount / 100, // Convert cents to real currency
+            status: 'approved' as 'approved', // Explicitly cast to allowed type
+            paymentMethod: 'external' as 'external' | 'pix' | 'card', // Initialize with allowed type
+            receiptUrl: payload.receipt_url,
+            invoiceSlug: payload.invoice_slug,
+            transactionId: payload.transaction_nsu,
+            payerName: 'InfinitePay User',
+        };
+
+        if (payload.capture_method === 'pix') {
+            paymentData.paymentMethod = 'pix';
+        } else if (payload.capture_method === 'credit_card') {
+            paymentData.paymentMethod = 'card';
+        }
+
+        // Check if payment already exists
+        const [payment, created] = await Payment.findOrCreate({
+            where: { transactionId: payload.transaction_nsu },
+            defaults: paymentData as any
+        });
+
+        if (!created) {
+            await payment.update(paymentData);
+        }
+
+        // Mark gift as purchased
         await gift.update({
             purchased: true,
             purchasedBy: 'Pagamento via InfinitePay',
             purchasedByEmail: null,
             purchasedAt: new Date(),
-            paymentMethod: payload.capture_method === 'pix' ? 'pix' : 'card',
+            paymentMethod: paymentData.paymentMethod,
         });
 
-        console.log('[InfinitePay Webhook] Gift marked as purchased:', giftId);
+        console.log('[InfinitePay Webhook] Gift marked as purchased and payment recorded:', giftId);
+
+        // Emit WebSocket event to notify all connected clients
+        io.emit('giftPurchased', {
+            giftId,
+            transactionNsu: payload.transaction_nsu,
+            captureMethod: payload.capture_method,
+            receiptUrl: payload.receipt_url,
+        });
+        console.log('[InfinitePay Webhook] WebSocket event emitted: giftPurchased', giftId);
 
         res.status(200).json({
             success: true,

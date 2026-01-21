@@ -10,13 +10,13 @@ const getGenAI = () => {
     return genAI;
 };
 
-const defaultSystemPrompt = `Você é um assistente virtual do casamento de Marcelo e Gabriela. 
+const defaultSystemPrompt = `Você é um assistente virtual do casamento de Marcelo e Gabriella. 
 Seja simpático, acolhedor e ajude os convidados com informações sobre o casamento.
 Responda em português brasileiro de forma amigável e concisa.
 Se não souber a resposta, sugira que o convidado entre em contato diretamente com os noivos.`;
 
 const defaultWeddingInfo = `
-Casamento: Marcelo & Gabriela
+Casamento: Marcelo & Gabriella
 Data: 18 de Abril de 2026
 Local da Cerimônia: A confirmar
 Horário: A confirmar
@@ -70,7 +70,7 @@ export const chat = async (message: string, conversationHistory: Array<{ role: s
                 },
                 {
                     role: 'model',
-                    parts: [{ text: 'Entendido! Estou pronto para ajudar os convidados com informações sobre o casamento de Marcelo e Gabriela. Como posso ajudar?' }],
+                    parts: [{ text: 'Entendido! Estou pronto para ajudar os convidados com informações sobre o casamento de Marcelo e Gabriella. Como posso ajudar?' }],
                 },
                 ...history,
             ],

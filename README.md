@@ -1,4 +1,4 @@
-# Site de Casamento - Marcelo & Gabriela 💒
+# Site de Casamento - Marcelo & Gabriella 💒
 
 Sistema completo para site de casamento com landing page, painel administrativo e integração com Mercado Pago.
 
@@ -154,4 +154,4 @@ docker-compose up -d
 
 ---
 
-Feito com 💕 para o casamento de Marcelo & Gabriela
+Feito com 💕 para o casamento de Marcelo & Gabriella

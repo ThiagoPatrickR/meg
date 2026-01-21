@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy, FaLightbulb, FaInfoCircle } from 'react-icons/fa';
+import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy, FaLightbulb, FaInfoCircle, FaSortAmountDown, FaSortAmountUp, FaSearch } from 'react-icons/fa';
+import { io } from 'socket.io-client';
 import api from '../../services/api';
 import './GiftList.css';
 
@@ -17,9 +18,39 @@ const GiftList = () => {
     const [copied, setCopied] = useState(false);
     const [showInfoBanner, setShowInfoBanner] = useState(true);
     const [sendingValue, setSendingValue] = useState(false);
+    const [sortOrder, setSortOrder] = useState('none'); // 'none' | 'asc' | 'desc'
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchData();
+    }, []);
+
+    // WebSocket connection for real-time updates
+    useEffect(() => {
+        // Connect to WebSocket server
+        const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3333';
+        const socket = io(socketUrl, {
+            transports: ['websocket', 'polling']
+        });
+
+        socket.on('connect', () => {
+            console.log('🔌 WebSocket conectado:', socket.id);
+        });
+
+        socket.on('giftPurchased', ({ giftId }) => {
+            console.log('🎁 Presente comprado via WebSocket:', giftId);
+            // Remove the purchased gift from the list with animation
+            setGifts(prevGifts => prevGifts.filter(g => g.id !== giftId));
+        });
+
+        socket.on('disconnect', () => {
+            console.log('🔌 WebSocket desconectado');
+        });
+
+        // Cleanup on unmount
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     const fetchData = async () => {
@@ -39,9 +70,52 @@ const GiftList = () => {
         }
     };
 
-    const filteredGifts = selectedCategory
-        ? gifts.filter(g => g.categoryId === selectedCategory)
-        : gifts;
+    // Função para normalizar texto (remove acentos, cedilhas, etc.)
+    const normalizeText = (text) => {
+        return text
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Remove diacríticos (acentos)
+            .replace(/ç/g, 'c') // Substitui cedilha
+            .replace(/[^a-z0-9\s]/g, ''); // Remove caracteres especiais
+    };
+
+    const filteredGifts = useMemo(() => {
+        let result = selectedCategory
+            ? gifts.filter(g => g.categoryId === selectedCategory)
+            : gifts;
+
+        // Aplicar busca por nome (normalizada - ignora acentos)
+        if (searchTerm.trim()) {
+            const normalizedTerm = normalizeText(searchTerm.trim());
+            result = result.filter(g => normalizeText(g.title).includes(normalizedTerm));
+        }
+
+        // Aplicar ordenação
+        if (sortOrder === 'asc') {
+            // Ordenação por menor preço
+            result = [...result].sort((a, b) => a.price - b.price);
+        } else if (sortOrder === 'desc') {
+            // Ordenação por maior preço
+            result = [...result].sort((a, b) => b.price - a.price);
+        } else {
+            // Ordenação padrão: "Lua de Mel" por último
+            result = [...result].sort((a, b) => {
+                const aIsHoneymoon = a.category?.name?.toLowerCase().includes('lua de mel') ||
+                    a.category?.name?.toLowerCase().includes('lua-de-mel') ||
+                    a.category?.name?.toLowerCase().includes('honeymoon');
+                const bIsHoneymoon = b.category?.name?.toLowerCase().includes('lua de mel') ||
+                    b.category?.name?.toLowerCase().includes('lua-de-mel') ||
+                    b.category?.name?.toLowerCase().includes('honeymoon');
+
+                if (aIsHoneymoon && !bIsHoneymoon) return 1;
+                if (!aIsHoneymoon && bIsHoneymoon) return -1;
+                return 0;
+            });
+        }
+
+        return result;
+    }, [gifts, selectedCategory, sortOrder, searchTerm]);
 
     const handleCategoryChange = (categoryId) => {
         if (categoryId === selectedCategory) return;
@@ -166,66 +240,7 @@ const GiftList = () => {
                     <p>Escolha algo especial para presentear os noivos</p>
                 </motion.div>
 
-                {/* Info Banner */}
-                <AnimatePresence>
-                    {showInfoBanner && (
-                        <motion.div
-                            className="gift-info-banner"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <div className="info-banner-header">
-                                <FaLightbulb className="info-icon" />
-                                <h3>Como presentear os noivos?</h3>
-                                <button
-                                    className="info-banner-close"
-                                    onClick={() => setShowInfoBanner(false)}
-                                    aria-label="Fechar"
-                                >
-                                    <FaTimes />
-                                </button>
-                            </div>
-                            <div className="info-banner-content">
-                                <div className="info-item">
-                                    <FaMoneyBillWave className="info-item-icon send-value" />
-                                    <div>
-                                        <strong>Enviar Valor</strong>
-                                        <p>Transfira o valor diretamente aos noivos</p>
-                                    </div>
-                                </div>
-                                <div className="info-item">
-                                    <FaShoppingCart className="info-item-icon buy" />
-                                    <div>
-                                        <strong>Comprar</strong>
-                                        <p>Compre o item diretamente na loja online através do link</p>
-                                    </div>
-                                </div>
-                                <div className="info-item address-info">
-                                    <FaMapMarkerAlt className="info-item-icon address" />
-                                    <div>
-                                        <strong>Endereço para Entrega</strong>
-                                        <p className="address-text">
-                                            {siteSettings?.street || 'A confirmar'}
-                                            {siteSettings?.neighborhood && ` - ${siteSettings.neighborhood}`}
-                                            {siteSettings?.city && `, ${siteSettings.city}`}
-                                            {siteSettings?.state && `/${siteSettings.state}`}
-                                            {siteSettings?.zipCode && ` - CEP: ${siteSettings.zipCode}`}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="info-item">
-                                    <FaCheck className="info-item-icon confirm" />
-                                    <div>
-                                        <strong>Já Comprei</strong>
-                                        <p>Registre que você já adquiriu este presente</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* Info Banner removido - mantido apenas checkout InfinitePay */}
 
                 {/* Category Filter */}
                 <div className="category-filter">
@@ -248,6 +263,47 @@ const GiftList = () => {
                     ))}
                 </div>
 
+                {/* Search and Sort Filters */}
+                <div className="filters-row">
+                    {/* Search Field */}
+                    <div className="search-filter">
+                        <FaSearch className="search-icon" />
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Buscar presente..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        {searchTerm && (
+                            <button
+                                className="search-clear"
+                                onClick={() => setSearchTerm('')}
+                                aria-label="Limpar busca"
+                            >
+                                <FaTimes />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Price Sort Filter */}
+                    <div className="sort-filter">
+                        <label className="sort-label">
+                            <FaSortAmountDown className="sort-icon" />
+                            Ordenar:
+                        </label>
+                        <select
+                            className="sort-select"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(e.target.value)}
+                        >
+                            <option value="none">Padrão</option>
+                            <option value="asc">Menor preço</option>
+                            <option value="desc">Maior preço</option>
+                        </select>
+                    </div>
+                </div>
+
                 {/* Gifts Grid */}
                 <div className="gifts-grid">
                     {categoryLoading ? (
@@ -259,16 +315,15 @@ const GiftList = () => {
                             </div>
                         </div>
                     ) : (
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence mode="popLayout">
                             {filteredGifts.map((gift, index) => (
                                 <motion.div
                                     key={gift.id}
                                     className="gift-card"
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                                    layout
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
                                 >
                                     <div className="gift-image">
                                         {gift.image ? (
@@ -290,45 +345,15 @@ const GiftList = () => {
 
                                     <div className="gift-actions">
                                         <button
-                                            className="gift-btn send-value"
+                                            className="gift-btn send-value presentear-btn"
                                             onClick={() => handleSendValue(gift)}
-                                            title="Enviar valor aos noivos"
+                                            title="Presentear os noivos"
                                             disabled={sendingValue}
                                         >
                                             <FaMoneyBillWave />
-                                            <span>{sendingValue ? 'Aguarde...' : 'Enviar Valor'}</span>
-                                        </button>
-
-                                        {gift.purchaseLink && (
-                                            <a
-                                                href={gift.purchaseLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="gift-btn buy"
-                                                title="Comprar direto na loja"
-                                            >
-                                                <FaShoppingCart />
-                                                <span>Comprar</span>
-                                            </a>
-                                        )}
-
-                                        <button
-                                            className="gift-btn address"
-                                            onClick={() => openAddressModal(gift)}
-                                            title="Endereço de entrega"
-                                        >
-                                            <FaMapMarkerAlt />
-                                            <span>Endereço</span>
+                                            <span>{sendingValue ? 'Aguarde...' : 'Presentear'}</span>
                                         </button>
                                     </div>
-
-                                    <button
-                                        className="gift-btn-confirm"
-                                        onClick={() => openPaymentModal(gift)}
-                                        title="Registre que você já adquiriu este presente"
-                                    >
-                                        <FaCheck /> Já comprei este presente
-                                    </button>
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -370,7 +395,7 @@ const GiftList = () => {
                                         <FaCheck />
                                     </div>
                                     <h3>Obrigado!</h3>
-                                    <p>Seu presente foi registrado com sucesso. Marcelo e Gabriela agradecem de coração! 💕</p>
+                                    <p>Seu presente foi registrado com sucesso. Marcelo e Gabriella agradecem de coração! 💕</p>
                                     <button className="btn btn-primary" onClick={closeModal}>
                                         Fechar
                                     </button>
@@ -382,7 +407,7 @@ const GiftList = () => {
                                 <div className="modal-address">
                                     <h3>Endereço para Entrega</h3>
                                     <div className="address-box">
-                                        <p><strong>Destinatário:</strong> {siteSettings?.recipientName || 'Marcelo e Gabriela'}</p>
+                                        <p><strong>Destinatário:</strong> {siteSettings?.recipientName || 'Marcelo e Gabriella'}</p>
                                         <p><strong>Endereço:</strong> {siteSettings?.street || 'A confirmar'}{siteSettings?.complement ? `, ${siteSettings.complement}` : ''}</p>
                                         <p><strong>Bairro:</strong> {siteSettings?.neighborhood || 'A confirmar'}</p>
                                         <p><strong>Cidade/Estado:</strong> {siteSettings?.city || 'A confirmar'}/{siteSettings?.state || 'GO'}</p>

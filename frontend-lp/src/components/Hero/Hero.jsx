@@ -46,7 +46,7 @@ const Hero = () => {
                 >
                     <p className="hero-subtitle">Vamos nos casar!</p>
                     <h1 className="hero-title">
-                        Marcelo <span className="ampersand">&</span> Gabriela
+                        Marcelo <span className="ampersand">&</span> Gabriella
                     </h1>
 
                     <div className="hero-info">

@@ -13,6 +13,9 @@ interface PaymentAttributes {
     paymentMethod: 'pix' | 'card' | 'external';
     pixQrCode: string | null;
     pixQrCodeBase64: string | null;
+    receiptUrl: string | null;
+    invoiceSlug: string | null;
+    transactionId: string | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -30,6 +33,9 @@ class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implem
     public paymentMethod!: 'pix' | 'card' | 'external';
     public pixQrCode!: string | null;
     public pixQrCodeBase64!: string | null;
+    public receiptUrl!: string | null;
+    public invoiceSlug!: string | null;
+    public transactionId!: string | null;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
@@ -90,6 +96,21 @@ Payment.init(
             type: DataTypes.TEXT,
             allowNull: true,
             field: 'pix_qr_code_base64',
+        },
+        receiptUrl: {
+            type: DataTypes.STRING(500),
+            allowNull: true,
+            field: 'receipt_url',
+        },
+        invoiceSlug: {
+            type: DataTypes.STRING(50),
+            allowNull: true,
+            field: 'invoice_slug',
+        },
+        transactionId: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+            field: 'transaction_id',
         },
     },
     {

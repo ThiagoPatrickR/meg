@@ -9,7 +9,7 @@ import Categories from './pages/Categories/Categories';
 import RSVPList from './pages/RSVPList/RSVPList';
 import MessagesList from './pages/MessagesList/MessagesList';
 import Payments from './pages/Payments/Payments';
-import ChatbotConfig from './pages/ChatbotConfig/ChatbotConfig';
+
 import Settings from './pages/Settings/Settings';
 import Photos from './pages/Photos/Photos';
 import './styles/global.css';
@@ -93,13 +93,7 @@ function App() {
             </PrivateRoute>
           } />
 
-          <Route path="/chatbot" element={
-            <PrivateRoute>
-              <AdminLayout>
-                <ChatbotConfig />
-              </AdminLayout>
-            </PrivateRoute>
-          } />
+
 
           <Route path="/photos" element={
             <PrivateRoute>

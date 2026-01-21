@@ -30,11 +30,11 @@ export const getConfig = async (req: Request, res: Response): Promise<void> => {
         if (!config) {
             // Create default config
             config = await ChatConfig.create({
-                systemPrompt: `Você é um assistente virtual do casamento de Marcelo e Gabriela. 
+                systemPrompt: `Você é um assistente virtual do casamento de Marcelo e Gabriella. 
 Seja simpático, acolhedor e ajude os convidados com informações sobre o casamento.
 Responda em português brasileiro de forma amigável e concisa.
 Se não souber a resposta, sugira que o convidado entre em contato diretamente com os noivos.`,
-                weddingInfo: `Casamento: Marcelo & Gabriela
+                weddingInfo: `Casamento: Marcelo & Gabriella
 Data: 18 de Abril de 2026
 Local da Cerimônia: A confirmar
 Horário: A confirmar

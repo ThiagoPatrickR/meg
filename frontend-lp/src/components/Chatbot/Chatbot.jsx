@@ -9,7 +9,7 @@ const Chatbot = () => {
     const [messages, setMessages] = useState([
         {
             role: 'model',
-            content: 'Olá! 👋 Sou o assistente virtual do casamento de Marcelo e Gabriela. Como posso ajudar?'
+            content: 'Olá! 👋 Sou o assistente virtual do casamento de Marcelo e Gabriella. Como posso ajudar?'
         }
     ]);
     const [input, setInput] = useState('');

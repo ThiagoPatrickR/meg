@@ -104,7 +104,7 @@ const Settings = ({ onMenuClick }) => {
                                         name="recipientName"
                                         value={formData.recipientName}
                                         onChange={handleChange}
-                                        placeholder="Ex: Marcelo e Gabriela"
+                                        placeholder="Ex: Marcelo e Gabriella"
                                     />
                                 </div>
                             </div>

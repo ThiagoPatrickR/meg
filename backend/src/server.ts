@@ -1,12 +1,32 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import app from './app';
 import sequelize from './database';
 import { User, GiftCategory } from './models';
 import bcrypt from 'bcryptjs';
 
 const PORT = process.env.PORT || 3333;
+
+// Create HTTP server and Socket.io instance
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+    console.log('🔌 Cliente WebSocket conectado:', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('🔌 Cliente WebSocket desconectado:', socket.id);
+    });
+});
 
 async function bootstrap() {
     try {
@@ -41,10 +61,11 @@ async function bootstrap() {
             console.log('✅ Default categories created');
         }
 
-        // Start server
-        app.listen(PORT, () => {
+        // Start server with Socket.io
+        httpServer.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
             console.log(`📍 API: http://localhost:${PORT}/api`);
+            console.log(`🔌 WebSocket: http://localhost:${PORT}`);
             console.log(`❤️  Health: http://localhost:${PORT}/health`);
         });
     } catch (error) {
@@ -54,3 +75,6 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+// Export io for use in controllers
+export { io };

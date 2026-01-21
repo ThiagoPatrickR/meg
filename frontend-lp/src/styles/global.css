@@ -1,4 +1,4 @@
-/* Wedding Theme - Marcelo & Gabriela */
+/* Wedding Theme - Marcelo & Gabriella */
 /* Color Palette: Rosa Claro e Verde Esmeralda */
 
 :root {
@@ -28,7 +28,7 @@
   --font-secondary: 'Poppins', 'Segoe UI', sans-serif;
 
   /* Spacing */
-  --section-padding: 80px 20px;
+  --section-padding: 50px 20px;
   --container-max: 1200px;
 
   /* Transitions */
@@ -84,6 +84,7 @@ img {
 section {
   width: 100%;
   box-sizing: border-box;
+  scroll-margin-top: 100px;
 }
 
 main {
@@ -280,7 +281,7 @@ main {
 /* Responsive */
 @media (max-width: 768px) {
   :root {
-    --section-padding: 60px 15px;
+    --section-padding: 40px 15px;
   }
 
   .section-title h2 {

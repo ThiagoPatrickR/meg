@@ -69,7 +69,7 @@ const Messages = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <h2>Recados para os Noivos</h2>
-                    <p>Deixe uma mensagem especial para Marcelo e Gabriela</p>
+                    <p>Deixe uma mensagem especial para Marcelo e Gabriella</p>
                 </motion.div>
 
                 <div className="messages-container">

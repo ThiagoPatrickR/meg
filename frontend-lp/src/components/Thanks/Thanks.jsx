@@ -37,7 +37,7 @@ const Thanks = () => {
 
                     <div className="thanks-signature">
                         <span>Com amor,</span>
-                        <h3>Marcelo & Gabriela</h3>
+                        <h3>Marcelo & Gabriella</h3>
                     </div>
 
                     <div className="thanks-hearts">

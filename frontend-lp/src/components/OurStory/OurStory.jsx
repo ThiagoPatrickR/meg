@@ -7,7 +7,7 @@ const timelineEvents = [
         icon: <FaHeart />,
         title: 'Como nos conhecemos',
         date: 'Placeholder',
-        description: 'A história de como Marcelo e Gabriela se conheceram pela primeira vez. Uma conexão instantânea que mudaria suas vidas para sempre.'
+        description: 'A história de como Marcelo e Gabriella se conheceram pela primeira vez. Uma conexão instantânea que mudaria suas vidas para sempre.'
     },
     {
         icon: <FaGlassCheers />,
@@ -76,7 +76,7 @@ const OurStory = () => {
                     <blockquote>
                         "O amor não é olhar um para o outro, é olhar juntos na mesma direção."
                     </blockquote>
-                    <cite>— Marcelo & Gabriela</cite>
+                    <cite>— Marcelo & Gabriella</cite>
                 </motion.div>
             </div>
         </section>
