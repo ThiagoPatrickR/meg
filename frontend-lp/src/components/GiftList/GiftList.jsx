@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy, FaLightbulb, FaInfoCircle, FaSortAmountDown, FaSortAmountUp, FaSearch } from 'react-icons/fa';
+import { FaShoppingCart, FaMoneyBillWave, FaMapMarkerAlt, FaTimes, FaCheck, FaCopy, FaLightbulb, FaInfoCircle, FaSortAmountDown, FaSortAmountUp, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { io } from 'socket.io-client';
 import api from '../../services/api';
 import './GiftList.css';
@@ -20,6 +20,11 @@ const GiftList = () => {
     const [sendingValue, setSendingValue] = useState(false);
     const [sortOrder, setSortOrder] = useState('none'); // 'none' | 'asc' | 'desc'
     const [searchTerm, setSearchTerm] = useState('');
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
+    const [customItemsPerPage, setCustomItemsPerPage] = useState('');
+    const [showCustomInput, setShowCustomInput] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -116,6 +121,40 @@ const GiftList = () => {
 
         return result;
     }, [gifts, selectedCategory, sortOrder, searchTerm]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredGifts.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedGifts = filteredGifts.slice(startIndex, endIndex);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategory, sortOrder, searchTerm, itemsPerPage]);
+
+    const handleItemsPerPageChange = (value) => {
+        if (value === 'custom') {
+            setShowCustomInput(true);
+        } else {
+            setShowCustomInput(false);
+            setItemsPerPage(Number(value));
+        }
+    };
+
+    const handleCustomItemsSubmit = () => {
+        const customValue = parseInt(customItemsPerPage, 10);
+        if (customValue && customValue > 0 && customValue <= 100) {
+            setItemsPerPage(customValue);
+            setShowCustomInput(false);
+        }
+    };
+
+    const goToPage = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     const handleCategoryChange = (categoryId) => {
         if (categoryId === selectedCategory) return;
@@ -316,7 +355,7 @@ const GiftList = () => {
                         </div>
                     ) : (
                         <AnimatePresence mode="popLayout">
-                            {filteredGifts.map((gift, index) => (
+                            {paginatedGifts.map((gift, index) => (
                                 <motion.div
                                     key={gift.id}
                                     className="gift-card"
@@ -363,6 +402,89 @@ const GiftList = () => {
                 {!categoryLoading && filteredGifts.length === 0 && (
                     <div className="no-gifts">
                         <p>Nenhum presente disponível nesta categoria.</p>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {!categoryLoading && filteredGifts.length > 0 && (
+                    <div className="pagination-container">
+                        <div className="pagination-info">
+                            <span>Mostrando {startIndex + 1}-{Math.min(endIndex, filteredGifts.length)} de {filteredGifts.length} presentes</span>
+                        </div>
+
+                        <div className="pagination-controls">
+                            <button
+                                className="pagination-btn"
+                                onClick={() => goToPage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                aria-label="Página anterior"
+                            >
+                                <FaChevronLeft />
+                            </button>
+
+                            <div className="pagination-pages">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .filter(page => {
+                                        // Show first, last, current, and adjacent pages
+                                        if (page === 1 || page === totalPages) return true;
+                                        if (Math.abs(page - currentPage) <= 1) return true;
+                                        return false;
+                                    })
+                                    .map((page, index, arr) => {
+                                        const prevPage = arr[index - 1];
+                                        const showEllipsis = prevPage && page - prevPage > 1;
+                                        return (
+                                            <span key={page}>
+                                                {showEllipsis && <span className="pagination-ellipsis">...</span>}
+                                                <button
+                                                    className={`pagination-page ${currentPage === page ? 'active' : ''}`}
+                                                    onClick={() => goToPage(page)}
+                                                >
+                                                    {page}
+                                                </button>
+                                            </span>
+                                        );
+                                    })}
+                            </div>
+
+                            <button
+                                className="pagination-btn"
+                                onClick={() => goToPage(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                aria-label="Próxima página"
+                            >
+                                <FaChevronRight />
+                            </button>
+                        </div>
+
+                        <div className="items-per-page">
+                            <label>Por página:</label>
+                            <select
+                                value={showCustomInput ? 'custom' : itemsPerPage}
+                                onChange={(e) => handleItemsPerPageChange(e.target.value)}
+                            >
+                                <option value="6">6</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                            {showCustomInput && (
+                                <div className="custom-items-input">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="100"
+                                        placeholder="Ex: 15"
+                                        value={customItemsPerPage}
+                                        onChange={(e) => setCustomItemsPerPage(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleCustomItemsSubmit()}
+                                    />
+                                    <button onClick={handleCustomItemsSubmit} className="custom-confirm-btn">
+                                        <FaCheck />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
