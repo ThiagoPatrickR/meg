@@ -33,42 +33,7 @@
     color: var(--rosa-claro);
 }
 
-.author-type-options {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
 
-.type-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 15px;
-    border: 2px solid #E0E0E0;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.9rem;
-}
-
-.type-option input {
-    display: none;
-}
-
-.type-option:hover,
-.type-option.active {
-    border-color: var(--verde-esmeralda);
-    background: rgba(2, 104, 65, 0.05);
-}
-
-.type-option.active {
-    background: var(--verde-esmeralda);
-    color: var(--white);
-}
-
-.type-option svg {
-    font-size: 1rem;
-}
 
 .sent-success {
     text-align: center;
@@ -114,26 +79,7 @@
     color: var(--verde-escuro);
 }
 
-.message-type {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.8rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: var(--light-gray);
-    color: var(--gray);
-}
 
-.message-type.family {
-    background: #E8F5E9;
-    color: var(--verde-esmeralda);
-}
-
-.message-type.godparent {
-    background: #FFF3E0;
-    color: #E65100;
-}
 
 .message-content {
     color: var(--dark-gray);
@@ -155,15 +101,5 @@
 
     .messages-display {
         max-height: 400px;
-    }
-}
-
-@media (max-width: 480px) {
-    .author-type-options {
-        flex-direction: column;
-    }
-
-    .type-option {
-        justify-content: center;
     }
 }

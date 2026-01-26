@@ -101,24 +101,7 @@ const Messages = () => {
                                     />
                                 </div>
 
-                                <div className="form-group">
-                                    <label>Você é:</label>
-                                    <div className="author-type-options">
-                                        {Object.entries(authorTypeLabels).map(([key, { label, icon }]) => (
-                                            <label key={key} className={`type-option ${formData.authorType === key ? 'active' : ''}`}>
-                                                <input
-                                                    type="radio"
-                                                    name="authorType"
-                                                    value={key}
-                                                    checked={formData.authorType === key}
-                                                    onChange={e => setFormData({ ...formData, authorType: e.target.value })}
-                                                />
-                                                {icon}
-                                                <span>{label}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
+
 
                                 <div className="form-group">
                                     <label>Sua Mensagem</label>
@@ -165,10 +148,7 @@ const Messages = () => {
                                     >
                                         <div className="message-header">
                                             <span className="message-author">{msg.authorName}</span>
-                                            <span className={`message-type ${msg.authorType}`}>
-                                                {authorTypeLabels[msg.authorType]?.icon}
-                                                {authorTypeLabels[msg.authorType]?.label}
-                                            </span>
+
                                         </div>
                                         <p className="message-content">"{msg.content}"</p>
                                     </motion.div>
